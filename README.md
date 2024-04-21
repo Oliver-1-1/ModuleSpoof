@@ -14,7 +14,7 @@ The outside will still have the illusion that the DLL is at the location that PE
 
 ## 1.2 Technical details: 
 To achieve this I found two alternatives. One way is to hook LoadLibrary and when LoadLibrary is called with the right name we manually map our DLL to another location.
-This has its drawbacks since we need to make sure the internal application never has access to the non-spoofed DLL since it will crash the application.
+This has its drawbacks since we need to make sure the internal application never has access to the non-spoofed DLL because it will crash the application.
 Making sure the internal application does not have that access is difficult since there might be a lot of win32-API functions reporting the non-spoofed location. 
 
 The other way I found is by a public repository[1]. To get more info on how this works I suggest reading the project's code.
