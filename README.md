@@ -1,5 +1,4 @@
 # Module Spoof
-For someone that only wants the code here is the GitHub: https://github.com/Oliver-1-1/ModuleSpoof
 
 ## 1.1 Introduction: 
 So recently I thought of a way to spoof the location of a DLL. By doing this you could hide important information from an attacker.
@@ -41,4 +40,5 @@ I might fix this in the future if I get motivated.
 [1] = https://github.com/changeofpace/Self-Remapping-Code
 
 [2] = https://github.com/Oliver-1-1/ModuleSpoof
+
 Other sources are found in the code.
