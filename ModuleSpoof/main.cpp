@@ -2,7 +2,6 @@
 #include "honeypot.hpp"
 
 void main() {
-	
 	uint64_t org = spoof("Protected.dll");
 	run_honeypot(org);
 	while (1) {

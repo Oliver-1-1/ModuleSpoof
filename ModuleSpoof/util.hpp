@@ -152,83 +152,27 @@ typedef union _LDR_DLL_NOTIFICATION_DATA {
 } LDR_DLL_NOTIFICATION_DATA, * PLDR_DLL_NOTIFICATION_DATA;
 
 typedef const _LDR_DLL_NOTIFICATION_DATA* PCLDR_DLL_NOTIFICATION_DATA;
-typedef unsigned __int64 QWORD;
-static BOOL read(QWORD address, PVOID buffer, QWORD length)
-{
 
+static uint64_t zepta_get_proc_address(uint64_t base, PCSTR export_name) {
+	PIMAGE_DOS_HEADER dos = (PIMAGE_DOS_HEADER)base;
+	if (dos->e_magic != IMAGE_DOS_SIGNATURE) return 0;
+	PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)((uint64_t)base + dos->e_lfanew);
+	if (nt->Signature != IMAGE_NT_SIGNATURE) return 0;
 
-	SIZE_T ret = 0;
-	if (!ReadProcessMemory(GetCurrentProcess(), (LPCVOID)address, buffer, length, &ret))
-	{
-		return 0;
-	}
-	return ret == length;
-}
+	IMAGE_DATA_DIRECTORY exp = nt->OptionalHeader.DataDirectory[0];
+	IMAGE_EXPORT_DIRECTORY* dir = (IMAGE_EXPORT_DIRECTORY*)(base + exp.VirtualAddress);
 
-inline WORD read_i16(QWORD address)
-{
-	WORD result = 0;
-	if (!read(address, &result, sizeof(result)))
-	{
-		return 0;
-	}
-	return result;
-}
+	PDWORD addresses = (PDWORD)(base + dir->AddressOfFunctions);
+	PDWORD names = (PDWORD)(base + dir->AddressOfNames);
+	uint16_t* ordinals = (uint16_t*)(base + dir->AddressOfNameOrdinals);
 
-inline DWORD read_i32(QWORD address)
-{
-	DWORD result = 0;
-	if (!read(address, &result, sizeof(result)))
-	{
-		return 0;
-	}
-	return result;
-}
-
-//Thank u ekknod :)
-static QWORD get_module_export(QWORD base, PCSTR export_name)
-{
-	QWORD a0;
-	DWORD a1[4]{};
-	char  a2[120]{};
-
-	a0 = base + read_i16(base + 0x3C);
-	if (a0 == base)
-	{
-		return 0;
-	}
-
-	DWORD wow64_off = read_i16(a0 + 0x4) == 0x8664 ? 0x88 : 0x78;
-
-	a0 = base + (QWORD)read_i32(a0 + wow64_off);
-	if (a0 == base)
-	{
-		return 0;
-	}
-
-	int name_length = (int)strlen(export_name);
-	if (name_length > 119)
-		name_length = 119;
-
-	read(a0 + 0x18, &a1, sizeof(a1));
-	while (a1[0]--)
-	{
-		a0 = (QWORD)read_i32(base + a1[2] + ((QWORD)a1[0] * 4));
-		if (a0 == 0)
-		{
-			continue;
-		}
-
-		read(base + a0, &a2, name_length + 1);
-		a2[name_length + 1] = 0;
-
-		if (!strcmp(a2, export_name))
-		{
-			a0 = read_i16(base + a1[3] + ((QWORD)a1[0] * 2)) * 4;
-			a0 = read_i32(base + a1[1] + a0);
-			return (base + a0);
+	for (int i = 0; i < dir->NumberOfNames; i++) {
+		PCSTR name = (PCSTR)(base + names[i]);
+		if (!_strcmpi(name, export_name)) {
+			return base + addresses[ordinals[i]];
 		}
 	}
+
 	return 0;
 }
 
