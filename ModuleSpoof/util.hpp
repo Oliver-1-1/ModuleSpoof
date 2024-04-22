@@ -153,7 +153,7 @@ typedef union _LDR_DLL_NOTIFICATION_DATA {
 
 typedef const _LDR_DLL_NOTIFICATION_DATA* PCLDR_DLL_NOTIFICATION_DATA;
 
-static uint64_t zepta_get_proc_address(uint64_t base, PCSTR export_name) {
+static uint64_t z_get_proc_address(uint64_t base, PCSTR export_name) {
 	PIMAGE_DOS_HEADER dos = (PIMAGE_DOS_HEADER)base;
 	if (dos->e_magic != IMAGE_DOS_SIGNATURE) return 0;
 	PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)((uint64_t)base + dos->e_lfanew);

@@ -43,7 +43,7 @@ FARPROC __stdcall get_proc_address_hook(HMODULE module, LPCSTR name) {
 		//Sleep(5000);
 		log("get_proc_address_hook remapped called!\n");
 
-		return (FARPROC)zepta_get_proc_address((uint64_t)remapped_location, name);
+		return (FARPROC)z_get_proc_address((uint64_t)remapped_location, name);
 	}
 
 	return orginal(module, name);
@@ -60,7 +60,7 @@ __int64 __fastcall get_proc_address_for_caller_hook(void* a1, const char* a2, __
 	if (a1 == remapped_location) {
 		//Sleep(5000);
 		log("get_proc_address_for_caller_hook remapped called!\n");
-		return (__int64)zepta_get_proc_address((uint64_t)remapped_location, a2);
+		return (__int64)z_get_proc_address((uint64_t)remapped_location, a2);
 	}
 
 	return orginal(a1, a2, a3);
