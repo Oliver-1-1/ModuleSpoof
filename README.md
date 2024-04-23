@@ -6,7 +6,7 @@ And the only way they could find this DLL is by brute-forcing pages or by revers
 This project spoofs the DLL location by trapping/ redirecting internal API calls to the spoofed location.
 To explain this I made a picture: 
 
-![overview: ](https://i.imgur.com/sXmry9E.png "overview: ")
+![overview: ](https://i.imgur.com/QSlq0oN.png "overview: ")
 
 So this shows that internal calls to functions like
 GetModuleHandleW, GetModuleHandleExW, GetProcAddress and GetProcAddressForCaller will return the location of the spoofed location.
